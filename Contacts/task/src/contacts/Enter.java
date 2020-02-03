@@ -88,7 +88,6 @@ public class Enter {
     public void setSurNameOfThePerson(String surNameOfThePerson) {
         this.surNameOfThePerson = surNameOfThePerson;
     }
-
     public void setNumberTelephon(String numberTelephon) {
         this.numberTelephon = numberTelephon;
     }
