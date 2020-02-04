@@ -19,8 +19,8 @@ public class Enter {
         lastCreated = new Date();
         System.out.print("Enter action (add, remove, edit, count, list, exit): ");
         scanner = new Scanner(System.in);
-        System.out.print("lastCreated");
         createPost();
+       System.out.print(lastCreated);
     }
 
     private void last_Name() throws InterruptedException {
