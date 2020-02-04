@@ -4,8 +4,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Enter {
 
+public class Enter {
+  public static Date lastCreated;
     private String nameOfThePerson;
     Scanner scanner;
     private String surNameOfThePerson;
@@ -15,8 +16,10 @@ public class Enter {
     private String enterSelect;
 
     public Enter() throws InterruptedException {
+        lastCreated = new Date();
         System.out.print("Enter action (add, remove, edit, count, list, exit): ");
         scanner = new Scanner(System.in);
+        System.out.print("lastCreated");
         createPost();
     }
 
@@ -215,5 +218,10 @@ private void exit(){
         scanner.close();
         return scanner;
     }
+  
+ 
+    
+      
+  
 }
 
