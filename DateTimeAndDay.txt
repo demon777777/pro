@@ -1,0 +1,51 @@
+Класс LocalDateTimeявляется комбинация LocalDateи LocalTime сохраняет такие значения как 2017-12-03T22:30. Он все еще не хранит информацию о часовом поясе. Его можно использовать в платежной системе. Как и в LocalTimeклассе, время с точностью до наносекунды.
+
+Создание LocalDateTime и текущего времени
+Пример того, LocalDateTimeчто представляет этот текущий момент, можно получить, как показано ниже:
+
+LocalDateTime now = LocalDateTime.now(); // this moment
+Класс имеет статические методы ofи parseдля создания экземпляров:
+
+LocalDateTime dt1 = LocalDateTime.of(2017, 11, 25, 22, 30);  // 25 November 2017, 22:30
+LocalDateTime dt2 = LocalDateTime.parse("2017-11-25T22:30"); // 25 November 2017, 22:30
+Также возможно получить экземпляр из экземпляров  LocalDateи LocalTime, как это:
+
+LocalDate date = LocalDate.of(2017, 11, 25); // 2017-11-25
+LocalTime time = LocalTime.of(21, 30); // 21:30
+        
+LocalDateTime dateTime = LocalDateTime.of(date, time); // 2017-11-25T21:30
+или используя специальные методы экземпляров LocalDateи LocalTime:
+
+LocalDate date = LocalDate.of(2017, 11, 25); // 2017-11-25
+LocalTime time = LocalTime.of(21, 30); // 21:30       
+ 
+LocalDateTime dateTime1 = date.atTime(time); // 2017-11-25T21:30
+LocalDateTime dateTime2 = time.atDate(date); // 2017-11-25T21:30
+LocalDateTime: от лет до минут
+Теперь давайте рассмотрим некоторые методы  LocalDateTimeкласса. Мы уже создали экземпляр dateTime для представления 25 ноября 2017 года в 22:30:
+
+LocalDateTime dateTime = LocalDateTime.of(2017, 11, 25, 22, 30); // 25 November 2017, 22:30
+В классе есть методы LocalDateTimeдля получения данных.
+
+int month = dateTime.getMonthValue(); // 11
+int day = dateTime.getDayOfMonth(); // 25
+int hour = dateTime.getHour(); // 22
+int minute = dateTime.getMinute(); // 30
+Также имеет класс метода экземпляр toLocalDateи toLocalTimeдля получения и время Даты как целые части LocalDateTime:
+
+LocalDate dateOf = dateTime.toLocalDate(); // 2017-11-25
+LocalTime timeOf = dateTime.toLocalTime(); // 22:30
+Арифметические методы LocalDateTime
+В классе есть методы для добавления, вычитания и изменения лет, месяцев, дней, часов, минут, секунд, а также LocalDateи LocalTime. Давайте рассмотрим их на другом примере:
+
+LocalDateTime endOf2017 = LocalDateTime.of(2017, 12, 31, 23, 59, 59); // 2017-12-31T23:59:59
+Вот как, добавляя одну секунду, мы получаем другой год или перемещаемся по годам: 
+
+LocalDateTime beginningOf2018 = endOf2017.plusSeconds(1); // 2018-01-01T00:00
+LocalDateTime beginningOf2020 = beginningOf2018.plusYears(2); // 2020-01-01T00:00
+Мы также можем изменить составляющие LocalDateTime, указав его значения:
+
+LocalDateTime beginningOf2020 = beginningOf2018.withYear(2020); // 2020-01-01T00:00
+ 
+
+Как видите,  LocalDateTimeэто еще один неизменный класс из java.timeпакета. Он представляет собой комбинацию LocalDateи LocalTime.
