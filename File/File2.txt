@@ -1,0 +1,91 @@
+Заявление о попытках использования ресурсов
+Оператор try-with-resources представляет собой tryоператор, который объявляет один или несколько ресурсов. Ресурс является объектом , который должен быть закрыт после того, как программа закончит с ним. Оператор try-with-resources гарантирует, что каждый ресурс закрыт в конце оператора. Любой реализующий объект java.lang.AutoCloseable, который включает в себя все реализуемые объекты java.io.Closeable, может использоваться в качестве ресурса.
+
+Следующий пример читает первую строку из файла. Он использует экземпляр BufferedReaderдля чтения данных из файла. BufferedReaderресурс, который должен быть закрыт после завершения программы:
+
+static String readFirstLineFromFile (String path) генерирует IOException {
+     try (BufferedReader br = 
+                   new BufferedReader (new FileReader (path))) { 
+        return br.readLine (); 
+    } 
+}
+В этом примере ресурс, объявленный в tryоператоре -with-resources, является BufferedReader. Оператор объявления появляется в скобках сразу после tryключевого слова. Класс BufferedReaderв Java SE 7 и более поздних версиях реализует интерфейс java.lang.AutoCloseable. Поскольку BufferedReaderэкземпляр объявлен в операторе try-with-resource, он будет закрыт независимо от того, tryзавершается ли оператор нормально или внезапно (в результате BufferedReader.readLineвызова метода IOException).
+
+До Java SE 7 вы можете использовать finallyблок, чтобы обеспечить закрытие ресурса независимо от того, tryзавершается ли оператор нормально или внезапно. В следующем примере finallyвместо tryинструкции -with-resources используется блок :
+
+static String readFirstLineFromFileWithFinallyBlock (String path) генерирует 
+                                                     IOException { 
+    BufferedReader br = new BufferedReader (новый FileReader (путь)); 
+    try { 
+        return br.readLine (); 
+    } наконец { 
+        if (br! = null) br.close (); 
+    } 
+}
+Однако в этом примере, если методы readLineи closeоба генерируют исключения, метод readFirstLineFromFileWithFinallyBlockгенерирует исключение, выброшенное из finallyблока; исключение, выброшенное из tryблока, подавляется. Напротив, в примере readFirstLineFromFile, если исключения вызываются как из tryблока, так и из tryоператора -with-resources, то метод readFirstLineFromFileвыдает исключение, выброшенное из tryблока; исключение, выброшенное из tryблока -with-resources, подавляется. В Java SE 7 и более поздних версиях вы можете получать исключенные исключения; см. раздел « Исключенные исключения» для получения дополнительной информации.
+
+Вы можете объявить один или несколько ресурсов в tryинструкции -with-resources. В следующем примере извлекаются имена файлов, упакованных в zip-файл, zipFileNameи создается текстовый файл, содержащий имена этих файлов:
+
+public static void writeToFileZipFileContents (String zipFileName, 
+                                           String outputFileName) 
+                                           выдает java.io.IOException { 
+
+    java.nio.charset.Charset charset = 
+         java.nio.charset.StandardCharsets.US_ASCII; 
+    java.nio.file.Path outputFilePath = 
+         java.nio.file.Paths.get (outputFileName); 
+
+    // Открыть zip-файл и создать выходной файл с 
+    помощью оператора // try-with-resources try ( 
+        java.util.zip.ZipFile zf = 
+             new java.util.zip.ZipFile (zipFileName); 
+        java.io.BufferedWriter writer =
+
+    
+            java.nio.file.Files.newBufferedWriter (outputFilePath, charset) 
+    ) { 
+        // Перечислить каждую запись 
+        для (java.util.Enumeration 
+                                records = zf.entries (); records.hasMoreElements ();) { 
+            // Получить имя записи и запишите его в выходной файл 
+            String newLine = System.getProperty ("line.separator"); 
+            String zipEntryName = 
+                 ((java.util.zip.ZipEntry) records.nextElement ()). GetName () + 
+                 newLine; 
+            writer.write (zipEntryName, 0, zipEntryName.length ()); 
+        } 
+    } 
+}
+В этом примере tryоператор -with-resources содержит два объявления, разделенных точкой с запятой: ZipFileи BufferedWriter. Когда блок кода , который непосредственно следует за ним завершается, либо нормально или из - за исключениями, closeспособы данных BufferedWriterи ZipFileобъекты автоматически вызываются в этом порядке. Обратите внимание, что closeметоды ресурсов вызываются в обратном порядке их создания.
+
+В следующем примере используется оператор try-with-resources для автоматического закрытия java.sql.Statementобъекта:
+
+public static void viewTable (Connection con) выбрасывает SQLException { 
+
+    String query = "выбрать COF_NAME, SUP_ID, PRICE, SALES, TOTAL из COFFEES"; try (Statement stmt = con.createStatement ()) { 
+        ResultSet rs = stmt.executeQuery (query); 
+        while (rs.next ()) { 
+            String coffeeName = rs.getString ("COF_NAME"); 
+            int supplierID = rs.getInt ("SUP_ID"); 
+            float price = rs.getFloat ("PRICE"); 
+            int sales = rs.getInt ("ПРОДАЖА"); 
+            int total = rs.getInt ("TOTAL"); 
+            System.out.println (coffeeName + "," + supplierID + "," + 
+                               price + ",
+
+    
+
+
+    } catch (SQLException e) { 
+        JDBCTutorialUtilities.printSQLException (e); 
+    } 
+}
+Ресурс, java.sql.Statementиспользуемый в этом примере, является частью API JDBC 4.1 и более поздних версий.
+
+Примечание : tryоператор -with-resources может иметь catchи finallyблокировать как обычный tryоператор. В операторе try-with-resources любой блок catchили finallyвыполняется после того, как объявленные ресурсы были закрыты.
+
+Исключенные исключения
+Исключение может быть вызвано из блока кода, связанного с tryоператором -with-resources. В примере writeToFileZipFileContents, исключение может быть выброшено из tryблока, и до два исключения может быть сгенерировано из tryзаявления -са-ресурсов , когда он пытается закрыть ZipFileи BufferedWriterобъекты. Если исключение выдается из tryблока, а одно или несколько исключений выбрасываются из tryоператора -with-resources, то исключение, выбрасываемое из tryоператора -with-resources, исключается, а выбрасываемое блоком исключение по writeToFileZipFileContentsметоду. Вы можете получить эти исключенные исключения, вызвав Throwable.getSuppressedметод из исключения, выданного tryблоком.
+
+Классы, которые реализуют интерфейс автозаполнения или закрытия
+См. Javadoc AutoCloseableи Closeableинтерфейсы для списка классов, которые реализуют любой из этих интерфейсов. CloseableИнтерфейс расширяет AutoCloseableинтерфейс. closeМетод Closeableинтерфейса генерирует исключения типа в IOExceptionто время как closeметод AutoCloseableинтерфейса генерирует исключения типа Exception. Следовательно, подклассы AutoCloseableинтерфейса могут переопределять это поведение closeметода, чтобы выдавать специализированные исключения, такие как IOException, или вообще никаких исключений.
